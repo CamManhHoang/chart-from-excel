@@ -19,18 +19,18 @@ oReq.onload = function(e) {
   var first_sheet_name = workbook.SheetNames[3];
   /* Get worksheet */
   var worksheet = workbook.Sheets[first_sheet_name];
-  // console.log(XLSX.utils.sheet_to_json(worksheet, {raw: true}));
 
-  var excelData = XLSX.utils.sheet_to_json(worksheet, {raw: true});
+  var excelData = XLSX.utils.sheet_to_json(worksheet, {raw: true, range: 13});
+  console.log(excelData);
 
   var names = [];
   var positions = [];
 
   excelData.forEach(function(element) {
-    names.push(element.__EMPTY);
+    names.push(element.Name);
     positions.push({
-      x: element['-0.36'],
-      y: element.YAS_BOND_YLD,
+      x: roundToTwo(element["Yrs to Mat"]),
+      y: roundToTwo(element["Blended YTM"]),
       r: 5,
     });
   });
@@ -40,10 +40,9 @@ oReq.onload = function(e) {
     labels: names,
     datasets: [
       {
-        label: 'name', // extract from excel file
+        label: 'Data',
         data: positions,
         backgroundColor: '#03DAC6',
-        borderWidth: 2,
       }],
   };
   let options = {
@@ -69,10 +68,11 @@ oReq.onload = function(e) {
       callbacks: {
         label: function(tooltipItem, data) {
           var label = data.labels[tooltipItem.index];
-          return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
-        }
-      }
-    }
+          return label + ': (' + tooltipItem.xLabel + ', ' +
+              tooltipItem.yLabel + ')';
+        },
+      },
+    },
   };
   let myChart = new Chart(ctx, {
     type: 'bubble',
@@ -82,3 +82,7 @@ oReq.onload = function(e) {
 };
 
 oReq.send();
+
+function roundToTwo(num) {
+  return +(Math.round(num + 'e+2') + 'e-2');
+}
