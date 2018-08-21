@@ -8,8 +8,18 @@
     <title>RV Static</title>
 </head>
 <body>
-<canvas id="my-chart" width="1000" height="600"></canvas>
-
+<nav class="header" style="margin-bottom: 10px;">
+    <div class="nav-wrapper">
+        <h1 style="max-width: 400px;float: left;font-weight: 500; margin: 15px;">RV Static</h1>
+        <button style="margin: 18px;font-weight: 600;font-size: 12px;">Choose a Excel File</button>
+    </div>
+    <div class="nav-title">
+        <h2 style="margin: 0;position: relative;border-bottom: 3px solid #d2d2d2;height: 28px;">
+            <span style="font-size: 14px;font-weight: 300;padding: 6px;border-bottom: 3px solid #29B6F6;position: absolute;left: 0;">YIELD (%S) vs YEAR TO MATURE</span>
+        </h2>
+    </div>
+</nav>
+<canvas id="my-chart" width="1000" height="500"></canvas>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="./Chart.js"></script>
 <script src="./index.js"></script>

@@ -54,6 +54,7 @@ oReq.onload = function(e) {
             max: 6,
             min: 2.8,
             stepSize: 0.2,
+            mirror: true
           },
         }],
       xAxes: [

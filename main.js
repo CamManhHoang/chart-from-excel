@@ -3,7 +3,7 @@ const path = require('path');
 const url = require('url');
 
 // SET ENV
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'development';
 
 const {app, BrowserWindow, Menu} = electron;
 
@@ -13,10 +13,10 @@ let mainWindow;
 app.on('ready', function() {
   // Create new window
   mainWindow = new BrowserWindow({
-    // Set the initial width to 500px
     width: 1200,
-    // Set the initial height to 400px
-    height: 900
+    height: 800,
+    minHeight: 400,
+    minWidth: 400
   });
   // Load html in window
   mainWindow.loadURL(url.format({
