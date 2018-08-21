@@ -1,88 +1,77 @@
-var url = 'test.xlsm';
-var oReq = new XMLHttpRequest();
-oReq.open('GET', url, true);
-oReq.responseType = 'arraybuffer';
+const electron = require('electron');
+const path = require('path');
+const url = require('url');
 
-oReq.onload = function(e) {
-  var arraybuffer = oReq.response;
+// SET ENV
+process.env.NODE_ENV = 'production';
 
-  /* convert data to binary string */
-  var data = new Uint8Array(arraybuffer);
-  var arr = new Array();
-  for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-  var bstr = arr.join('');
+const {app, BrowserWindow, Menu} = electron;
 
-  /* Call XLSX */
-  var workbook = XLSX.read(bstr, {type: 'binary'});
+let mainWindow;
 
-  /* DO SOMETHING WITH workbook HERE */
-  var first_sheet_name = workbook.SheetNames[3];
-  /* Get worksheet */
-  var worksheet = workbook.Sheets[first_sheet_name];
-
-  var excelData = XLSX.utils.sheet_to_json(worksheet, {raw: true, range: 13});
-  console.log(excelData);
-
-  var names = [];
-  var positions = [];
-
-  excelData.forEach(function(element) {
-    names.push(element.Name);
-    positions.push({
-      x: roundToTwo(element["Yrs to Mat"]),
-      y: roundToTwo(element["Blended YTM"]),
-      r: 5,
-    });
+// Listen for app to be ready
+app.on('ready', function() {
+  // Create new window
+  mainWindow = new BrowserWindow({
+    // Set the initial width to 500px
+    width: 1200,
+    // Set the initial height to 400px
+    height: 900
+  });
+  // Load html in window
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true,
+  }));
+  // Quit app when closed
+  mainWindow.on('closed', function() {
+    app.quit();
   });
 
-  let ctx = document.getElementById('myChart');
-  let bubbleData = {
-    labels: names,
-    datasets: [
+  // Build menu from template
+  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+  // Insert menu
+  Menu.setApplicationMenu(mainMenu);
+});
+
+// Create menu template
+const mainMenuTemplate = [
+  // Each object is a dropdown
+  {
+    label: 'File',
+    submenu: [
       {
-        label: 'Data',
-        data: positions,
-        backgroundColor: '#03DAC6',
-      }],
-  };
-  let options = {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            max: 6,
-            min: 2.8,
-            stepSize: 0.2,
-          },
-        }],
-      xAxes: [
-        {
-          ticks: {
-            max: 7,
-            min: 0,
-            stepSize: 1,
-          },
-        }],
-    },
-    tooltips: {
-      callbacks: {
-        label: function(tooltipItem, data) {
-          var label = data.labels[tooltipItem.index];
-          return label + ': (' + tooltipItem.xLabel + ', ' +
-              tooltipItem.yLabel + ')';
+        label: 'Quit',
+        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        click() {
+          app.quit();
         },
       },
-    },
-  };
-  let myChart = new Chart(ctx, {
-    type: 'bubble',
-    data: bubbleData,
-    options: options,
+    ],
+  },
+];
+
+// If OSX, add empty object to menu
+if (process.platform == 'darwin') {
+  mainMenuTemplate.unshift({});
+}
+
+// Add developer tools option if in dev
+if (process.env.NODE_ENV !== 'production') {
+  mainMenuTemplate.push({
+    label: 'Developer Tools',
+    submenu: [
+      {
+        role: 'reload',
+      },
+      {
+        label: 'Toggle DevTools',
+        accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+        click(item, focusedWindow) {
+          focusedWindow.toggleDevTools();
+        },
+      },
+    ],
   });
-};
-
-oReq.send();
-
-function roundToTwo(num) {
-  return +(Math.round(num + 'e+2') + 'e-2');
 }
