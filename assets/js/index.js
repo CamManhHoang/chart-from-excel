@@ -28,7 +28,8 @@ let options = {
           min: 0,
           stepSize: 1,
         },
-      }],
+      },
+    ],
   },
   tooltips: {
     callbacks: {
@@ -42,8 +43,17 @@ let options = {
   legend: {
     display: false,
   },
+  pan: {
+    enabled: true,
+    mode: 'xy'
+  },
+  zoom: {
+    enabled: true,
+    mode: 'xy',
+  }
 };
-const myChart = new Chart(ctx, {
+
+window.myChart = new Chart(ctx, {
   type: 'bubble',
   data: bubbleData,
   options: options,
@@ -104,4 +114,8 @@ document.getElementById('upload').addEventListener('change', handleFile, false);
 
 function roundToTwo(num) {
   return +(Math.round(num + 'e+2') + 'e-2');
+}
+
+function resetZoom() {
+  window.myChart.resetZoom()
 }
