@@ -1,9 +1,9 @@
 /*jslint browser:true, devel:true, white:true, vars:true */
 /*global require*/
 
-// // hammer JS for touch support
-// var Hammer = require('hammerjs');
-// Hammer = typeof(Hammer) === 'function' ? Hammer : window.Hammer;
+// hammer JS for touch support
+var Hammer = require('./assets/js/hammer.min.js');
+Hammer = typeof(Hammer) === 'function' ? Hammer : window.Hammer;
 
 // Get the chart variable
 var Chart = require('./assets/js/chart.js');
@@ -408,6 +408,96 @@ var zoomPlugin = {
 			};
 
 			node.addEventListener('wheel', chartInstance.zoom._wheelHandler);
+		}
+
+		if (Hammer) {
+			var mc = new Hammer.Manager(node);
+			mc.add(new Hammer.Pinch());
+			mc.add(new Hammer.Pan({
+				threshold: panThreshold
+			}));
+
+			// Hammer reports the total scaling. We need the incremental amount
+			var currentPinchScaling;
+			var handlePinch = function handlePinch(e) {
+				var diff = 1 / (currentPinchScaling) * e.scale;
+				var rect = e.target.getBoundingClientRect();
+				var offsetX = e.center.x - rect.left;
+				var offsetY = e.center.y - rect.top;
+				var center = {
+					x : offsetX,
+					y : offsetY
+				};
+
+				// fingers position difference
+				var x = Math.abs(e.pointers[0].clientX - e.pointers[1].clientX);
+				var y = Math.abs(e.pointers[0].clientY - e.pointers[1].clientY);
+
+				// diagonal fingers will change both (xy) axes
+				var p = x / y;
+				var xy;
+				if (p > 0.3 && p < 1.7) {
+					xy = 'xy';
+				}
+				// x axis
+				else if (x > y) {
+					xy = 'x';
+				}
+				// y axis
+				else {
+					xy = 'y';
+				}
+
+				doZoom(chartInstance, diff, center, xy);
+
+				// Keep track of overall scale
+				currentPinchScaling = e.scale;
+			};
+
+			mc.on('pinchstart', function(e) {
+				currentPinchScaling = 1; // reset tracker
+			});
+			mc.on('pinch', handlePinch);
+			mc.on('pinchend', function(e) {
+				handlePinch(e);
+				currentPinchScaling = null; // reset
+				zoomNS.zoomCumulativeDelta = 0;
+			});
+
+			var currentDeltaX = null, currentDeltaY = null, panning = false;
+			var handlePan = function handlePan(e) {
+				if (currentDeltaX !== null && currentDeltaY !== null) {
+					panning = true;
+					var deltaX = e.deltaX - currentDeltaX;
+					var deltaY = e.deltaY - currentDeltaY;
+					currentDeltaX = e.deltaX;
+					currentDeltaY = e.deltaY;
+					doPan(chartInstance, deltaX, deltaY);
+				}
+			};
+
+			mc.on('panstart', function(e) {
+				currentDeltaX = 0;
+				currentDeltaY = 0;
+				handlePan(e);
+			});
+			mc.on('panmove', handlePan);
+			mc.on('panend', function(e) {
+				currentDeltaX = null;
+				currentDeltaY = null;
+				zoomNS.panCumulativeDelta = 0;
+				setTimeout(function() { panning = false; }, 500);
+			});
+
+			chartInstance.zoom._ghostClickHandler = function(e) {
+				if (panning) {
+					e.stopImmediatePropagation();
+					e.preventDefault();
+				}
+			};
+			node.addEventListener('click', chartInstance.zoom._ghostClickHandler);
+
+			chartInstance._mc = mc;
 		}
 	},
 
