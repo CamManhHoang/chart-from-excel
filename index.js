@@ -49,6 +49,10 @@ function handleFile(e) {
       scales: {
         yAxes: [
           {
+            scaleLabel: {
+              display: true,
+              labelString: 'Yield',
+            },
             ticks: {
               max: 6,
               min: 2.8,
@@ -57,6 +61,10 @@ function handleFile(e) {
           }],
         xAxes: [
           {
+            scaleLabel: {
+              display: true,
+              labelString: 'Year To Mature',
+            },
             ticks: {
               max: 8,
               min: 0,
@@ -74,7 +82,7 @@ function handleFile(e) {
         },
       },
     };
-    let myChart = new Chart(ctx, {
+    new Chart(ctx, {
       type: 'bubble',
       data: bubbleData,
       options: options,
