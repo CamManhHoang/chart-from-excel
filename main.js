@@ -16,7 +16,7 @@ app.on('ready', function() {
     width: 1200,
     height: 800,
     minHeight: 400,
-    minWidth: 400
+    minWidth: 800
   });
   // Load html in window
   mainWindow.loadURL(url.format({

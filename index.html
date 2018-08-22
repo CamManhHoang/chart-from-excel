@@ -25,45 +25,5 @@
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="./Chart.js"></script>
 <script src="./index.js"></script>
-<script>
-  let ctx = document.getElementById('my-chart');
-  let bubbleData = {
-    labels: [],
-    datasets: [],
-  };
-  let options = {
-    scales: {
-      yAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: 'Yield',
-          },
-          ticks: {
-            max: 6,
-            min: 2.8,
-            stepSize: 0.2,
-          },
-        }],
-      xAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: 'Year To Mature',
-          },
-          ticks: {
-            max: 8,
-            min: 0,
-            stepSize: 1,
-          },
-        }],
-    }
-  };
-  new Chart(ctx, {
-    type: 'bubble',
-    data: bubbleData,
-    options: options,
-  });
-</script>
 </body>
 </html>
