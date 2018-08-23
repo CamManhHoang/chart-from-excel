@@ -73,6 +73,7 @@ var XLSX = require('xlsx');
 var rABS = false; // true: readAsBinaryString ; false: readAsArrayBuffer
 
 function handleFile(e) {
+  showLoading();
   var files = e.target.files, f = files[0];
   var reader = new FileReader();
   reader.onload = function(e) {
@@ -118,6 +119,7 @@ function handleFile(e) {
     bubbleData.datasets.push(newDataset);
     bubbleData.labels = names;
     myChart.update();
+    hideLoading();
   };
   if (rABS) reader.readAsBinaryString(f); else reader.readAsArrayBuffer(f);
 }
@@ -154,4 +156,12 @@ function showLabel() {
     myChart.options = options;
     myChart.update();
   }
+}
+
+function showLoading() {
+  document.getElementById('curtain').style.display = 'block';
+}
+
+function hideLoading() {
+  document.getElementById('curtain').style.display = 'none';
 }
