@@ -32,12 +32,14 @@ let options = {
     ],
   },
   tooltips: {
+    backgroundColor: '#ffffff',
     callbacks: {
       label: function(tooltipItem, data) {
-        var label = data.labels[tooltipItem.index];
-        return label + ': (' + tooltipItem.xLabel + ', ' +
-            tooltipItem.yLabel + ')';
+        return data.labels[tooltipItem.index];
       },
+      labelTextColor:function(tooltipItem, chart){
+        return '#000000';
+      }
     },
   },
   legend: {
@@ -118,4 +120,12 @@ function roundToTwo(num) {
 
 function resetZoom() {
   window.myChart.resetZoom()
+}
+
+function showLabel() {
+  if (document.getElementById("show-label").checked) {
+    console.log('show label');
+  } else {
+    console.log('hide label');
+  }
 }
