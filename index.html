@@ -22,12 +22,12 @@
     </div>
 </nav>
 <div>
-    <button onclick="resetZoom()" style="float: right; margin-bottom: 5px;">Reset Zoom</button>
-    <div class="checkbox">
+    <button class="reset-zoom" onclick="resetZoom()">Reset Zoom</button>
+    <div class="checkbox" id="checkbox">
         <label class="checkbox-button">
             <input type="checkbox" class="checkbox-button__input" id="show-label" name="show-label" onclick="showLabel()">
             <span class="checkbox-button__control"></span>
-            <span class="checkbox-button__label">Show Label</span>
+            <span class="checkbox-button__label no-select">Show Label</span>
         </label>
     </div>
     <canvas id="my-chart" width="1000" height="500"></canvas>
@@ -35,6 +35,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="./assets/js/chart.js"></script>
 <script src="./assets/js/chart.zoom.js"></script>
+<script src="./assets/js/chartjs-plugin-datalabels.js"></script>
 <script src="./assets/js/index.js"></script>
 </body>
 </html>

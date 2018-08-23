@@ -3,7 +3,7 @@ let ctx = document.getElementById('my-chart');
 let bubbleData = {
   datasets: [],
 };
-let options = {
+window.options = {
   scales: {
     yAxes: [
       {
@@ -37,9 +37,9 @@ let options = {
       label: function(tooltipItem, data) {
         return data.labels[tooltipItem.index];
       },
-      labelTextColor:function(tooltipItem, chart){
+      labelTextColor: function(tooltipItem, chart) {
         return '#000000';
-      }
+      },
     },
   },
   legend: {
@@ -47,12 +47,19 @@ let options = {
   },
   pan: {
     enabled: true,
-    mode: 'xy'
+    mode: 'xy',
   },
   zoom: {
     enabled: true,
     mode: 'xy',
-  }
+  },
+  plugins: {
+    datalabels: {
+      formatter: function() {
+        return null;
+      },
+    },
+  },
 };
 
 window.myChart = new Chart(ctx, {
@@ -99,6 +106,9 @@ function handleFile(e) {
       });
     });
 
+    /* Un-hidden show-label form */
+    document.getElementById('checkbox').style.visibility = 'visible';
+
     /* Update Chart with new data from excel */
     const newDataset = {
       label: 'Data',
@@ -119,13 +129,29 @@ function roundToTwo(num) {
 }
 
 function resetZoom() {
-  window.myChart.resetZoom()
+  window.myChart.resetZoom();
 }
 
 function showLabel() {
-  if (document.getElementById("show-label").checked) {
-    console.log('show label');
+  if (document.getElementById('show-label').checked) {
+    window.options.plugins = {
+      datalabels: {
+        formatter: function(value, context) {
+          return context.chart.data.labels[context.dataIndex];
+        },
+      },
+    };
+    myChart.options = options;
+    myChart.update();
   } else {
-    console.log('hide label');
+    window.options.plugins = {
+      datalabels: {
+        formatter: function() {
+          return null;
+        },
+      },
+    };
+    myChart.options = options;
+    myChart.update();
   }
 }
