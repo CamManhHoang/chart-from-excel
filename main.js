@@ -13,8 +13,8 @@ let mainWindow;
 app.on('ready', function() {
   // Create new window
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1300,
+    height: 850,
     minHeight: 400,
     minWidth: 800
   });
